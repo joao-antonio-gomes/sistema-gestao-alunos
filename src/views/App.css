@@ -1,0 +1,14 @@
+
+.pag-inicial {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.botoes-home {
+    width: 60vw;
+    margin-bottom: 20px !important;
+}

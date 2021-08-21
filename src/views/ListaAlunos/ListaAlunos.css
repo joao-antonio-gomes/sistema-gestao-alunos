@@ -1,0 +1,22 @@
+.page-lista-alunos {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.lista-alunos, .container-lista-search {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-lista-search {
+    align-items: center;
+    padding-top: 4vh;
+}
+
+#search-bar {
+    width: 90vw !important;
+}

@@ -1,0 +1,65 @@
+import React, {useEffect, useState} from 'react'
+import './App.css'
+import FormCadastro from './FormCadastro/FormCadastro'
+import ListaAlunos from './ListaAlunos/ListaAlunos'
+import {Button} from '@material-ui/core'
+import {BrowserRouter as Router, Link, Route, Switch, useHistory} from 'react-router-dom'
+import DetalhesEmpregado from './DetalhesEmpregado/DetalhesEmpregado'
+import FormEdit from './FormEdit/FormEdit'
+import '../server/server';
+import {logDOM} from '@testing-library/react'
+
+export const App = props => {
+    const [movies, setMovies] = useState(null)
+    /*useEffect(() => {
+        fetch('/api/movies', {
+            method: 'POST',
+            body: JSON.stringify({ 'name': 'Insterstellar', 'year': '2014' })
+        })
+    }, [])*/
+
+    return (
+        <div className="app">
+            <Router>
+                <Switch>
+                    <Route exact path={'/'}>
+                        <div className={'pag-inicial'}>
+                            <Link to={'/cadastro'}>
+                                <Button variant="contained"
+                                        color="primary"
+                                        className="botoes-home botao-primario"
+                                        disableElevation>
+                                    Cadastrar novo aluno
+                                </Button>
+                            </Link>
+                            <Link to={'/lista-alunos'}>
+                                <Button variant="contained"
+                                        color="secondary"
+                                        className="botoes-home botao-secundario"
+                                        disableElevation>
+                                    Lista de alunos
+                                </Button>
+                            </Link>
+                        </div>
+                    </Route>
+
+                    <Route exact path={'/cadastro'}>
+                        <FormCadastro/>
+                    </Route>
+
+                    <Route exact path={'/lista-alunos'}>
+                        <ListaAlunos/>
+                    </Route>
+
+                    <Route exact path={'/detalhes-empregado'}>
+                        <DetalhesEmpregado/>
+                    </Route>
+
+                    <Route exact path={'/form-edit'}>
+                        <FormEdit/>
+                    </Route>
+                </Switch>
+            </Router>
+        </div>
+    )
+}

@@ -1,0 +1,12 @@
+.cabecalho {
+    height: 6vh;
+    display: flex;
+    align-items: center;
+}
+
+.icone-voltar {
+    padding-top: 2vh;
+    cursor: pointer;
+    font-size: 2.5rem !important;
+    margin: 0.5rem 0 0 0.5rem;
+}
