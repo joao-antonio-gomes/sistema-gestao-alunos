@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import './FormCadastro.css'
+import React, {useEffect, useState} from 'react';
+import './FormCadastro.css';
 import {
     Button,
     Checkbox,
@@ -9,11 +9,11 @@ import {
     FormLabel,
     InputLabel,
     makeStyles, MenuItem, Select,
-    TextField
-} from '@material-ui/core'
-import Collapse from '@material-ui/core/Collapse'
-import {Switch, useHistory} from 'react-router-dom'
-import Cabecalho from '../../components/Cabecalho/Cabecalho'
+    TextField,
+} from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
+import {Switch, useHistory} from 'react-router-dom';
+import Cabecalho from '../../components/Cabecalho/Cabecalho';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -31,21 +31,21 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 120,
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     textField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         width: 200,
     },
-}))
+}));
 
 const FormCadastro = () => {
-    const classes = useStyles()
+    const classes = useStyles();
     const [inputValue, setInputValue] = useState({
         nomeAluno: '',
         dataAniversario: '',
-        turma: ``,
+        turma: '',
         nomeResponsavel: '',
         telefoneResponsavel: '',
         telefoneEmergencia: '',
@@ -55,52 +55,103 @@ const FormCadastro = () => {
         obsRestricao: '',
         checkRestricao: false,
         checkImagem: false,
-    })
+    });
 
-    const history = useHistory()
+    const [inputRequire, setInputRequire] = useState({
+        nomeAluno: false,
+        dataAniversario: false,
+        turma: false,
+        nomeResponsavel: false,
+        telefoneResponsavel: false,
+        telefoneEmergencia: false,
+        responsavelRetirar: false,
+        parentescoResponsavel: false,
+    });
+
+    const history = useHistory();
 
     const handleHistory = () => {
-        history.push('/')
+        history.push('/');
+    };
+
+    const validaCamposPreenchidos = () => {
+        let bool = true;
+        let obj = {};
+        const objOriginal = {...inputRequire};
+        for (let inputRequireKey in inputRequire) {
+            let input = document.querySelector(`input[name="` + inputRequireKey + `"]`);
+            if (input.required && input.value === '') {
+                obj = {
+                    ...obj,
+                    [inputRequireKey]: true,
+                };
+                bool = false;
+            }
+        }
+        setInputRequire({...obj});
+        setTimeout(()=>{setInputRequire({...objOriginal})},3000)
+        return bool;
+    };
+
+    const limpaFormulario = () => {
+        for (let inputValueKey in inputValue) {
+            let valor = '';
+            if (inputValueKey === 'checkRestricao' || inputValueKey === 'checkImagem') {
+                valor = false;
+            }
+            setInputValue({
+                ...inputValue,
+                [inputValueKey]: ''
+            })
+            console.log(inputValue);
+        }
     }
 
     const handleChange = (event) => {
         if (event.target.type === 'checkbox') {
             setInputValue({
                 ...inputValue,
-                [event.target.name]: event.target.checked
-            })
-            return
+                [event.target.name]: event.target.checked,
+            });
+            return;
         }
         setInputValue({
             ...inputValue,
-            [event.target.name]: event.target.value
-        })
-    }
+            [event.target.name]: event.target.value,
+        });
+    };
 
-    const imprimeInputValue = () => {
+    const cadastraAluno = (e) => {
+        e.preventDefault();
+        if (!validaCamposPreenchidos()) {
+            return;
+        }
         fetch('/api/alunos', {
-            method: 'PUT',
-            body: JSON.stringify(inputValue)
-        })
+            method: 'POST',
+            body: JSON.stringify(inputValue),
+        }).then(r => r.json());
 
-        console.log(inputValue)
-
-        setTimeout(()=>{
+        setTimeout(() => {
             fetch('/api/alunos')
                 .then(res => res.json())
                 .then(console.log)
-                .catch(err => console.log(err))
-        },1000)
-    }
+                .catch(err => console.log(err));
+        }, 1000);
+    };
+
     return (
         <div className={'form-cadastro'}>
             <Cabecalho onClick={handleHistory}/>
-            <form className={classes.root} noValidate autoComplete="off">
+            <form className={classes.root} noValidate autoComplete="off" method={'POST'}>
                 <TextField value={inputValue.nomeAluno}
                            onChange={handleChange}
                            name="nomeAluno"
                            label="Nome do Aluno"
-                           size="small"/>
+                           size="small"
+                           error={inputRequire.nomeAluno}
+                           helperText={inputRequire.nomeAluno ? 'Campo obrigatório!' : ''}
+                           required
+                />
                 <div className={'data-turma-group'}>
                     <TextField
                         value={inputValue.dataAniversario}
@@ -110,29 +161,40 @@ const FormCadastro = () => {
                         type="date"
                         defaultValue=""
                         className={classes.textField}
+                        required
+                        error={inputRequire.dataAniversario}
+                        helperText={inputRequire.dataAniversario ? 'Campo obrigatório!' : ''}
                         InputLabelProps={{
                             shrink: true,
                         }}/>
                     <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="turma">Selecione uma turma:</InputLabel>
+                        <InputLabel
+                            htmlFor="turma"
+                            required
+                            error={inputRequire.turma}
+                            helperText={inputRequire.turma ? 'Campo obrigatório!' : ''}
+                        >Selecione uma turma:
+                        </InputLabel>
                         <Select
                             MenuProps={{
                                 anchorOrigin: {
                                     vertical: 'bottom',
-                                    horizontal: 'left'
+                                    horizontal: 'left',
                                 },
                                 transformOrigin: {
                                     vertical: 'top',
-                                    horizontal: 'left'
+                                    horizontal: 'left',
                                 },
                                 getContentAnchorEl: null,
                             }}
                             inputProps={{
                                 name: 'turma',
-                                id: 'turma',
                             }}
                             value={inputValue.turma}
                             onChange={handleChange}
+                            required
+                            error={inputRequire.turma}
+                            helperText={inputRequire.turma ? 'Campo obrigatório!' : ''}
                         >
                             <MenuItem value={''}><em>None</em></MenuItem>
                             <MenuItem value={101}>101</MenuItem>
@@ -145,26 +207,47 @@ const FormCadastro = () => {
                            onChange={handleChange}
                            name="nomeResponsavel"
                            label="Nome do Responsável"
+                           required
+                           error={inputRequire.nomeResponsavel}
+                           helperText={inputRequire.nomeResponsavel ? 'Campo obrigatório!' : ''}
                            size="small"/>
                 <TextField value={inputValue.telefoneResponsavel} name="telefoneResponsavel" onChange={handleChange}
                            label="Telefone Contato Responsável"
+                           required
+                           error={inputRequire.telefoneResponsavel}
+                           helperText={inputRequire.telefoneResponsavel ? 'Campo obrigatório!' : ''}
                            size="small"/>
                 <TextField value={inputValue.telefoneEmergencia} name="telefoneEmergencia" onChange={handleChange}
                            label="Telefone Contato Emergência"
+                           required
+                           error={inputRequire.telefoneEmergencia}
+                           helperText={inputRequire.telefoneEmergencia ? 'Campo obrigatório!' : ''}
                            size="small"/>
                 <TextField value={inputValue.obsAdicionais} name="obsAdicionais" onChange={handleChange}
                            label="Observações adicionais" size="small"/>
                 <FormGroup>
                     <TextField value={inputValue.responsavelRetirar} name="responsavelRetirar" onChange={handleChange}
                                label="Nome do responsável para retirar"
+                               required
+                               error={inputRequire.responsavelRetirar}
+                               helperText={inputRequire.responsavelRetirar ? 'Campo obrigatório!' : ''}
                                size="small"/>
                     <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="parentescoResponsavel">Parentesco do responsável para
-                            retirar:</InputLabel>
+                        <InputLabel
+                            htmlFor="parentescoResponsavel"
+                            required
+                            error={inputRequire.parentescoResponsavel}
+                            helperText={inputRequire.parentescoResponsavel ? 'Campo obrigatório!' : ''}
+                        >
+                            Parentesco do responsável para retirar:
+                        </InputLabel>
                         <Select
                             inputProps={{
                                 name: 'parentescoResponsavel',
                             }}
+                            required
+                            error={inputRequire.parentescoResponsavel}
+                            helperText={inputRequire.parentescoResponsavel ? 'Campo obrigatório!' : ''}
                             onChange={handleChange}
                             value={inputValue.parentescoResponsavel}
                         >
@@ -198,25 +281,27 @@ const FormCadastro = () => {
                                            color={'primary'}/>}
                     />
                 </FormGroup>
-
+                <div className={'form-cadastro-botoes'}>
+                    <Button variant="contained"
+                            color="secondary"
+                            className={'botoes'}
+                            onClick={limpaFormulario}
+                            disableElevation>
+                        Limpar
+                    </Button>
+                    <Button variant="contained"
+                            type={'submit'}
+                            color="primary"
+                            className={'botoes'}
+                            onClick={cadastraAluno}
+                            disableElevation>
+                        Cadastrar
+                    </Button>
+                </div>
             </form>
-            <div className={'form-cadastro-botoes'}>
-                <Button variant="contained"
-                        color="secondary"
-                        className={'botoes'}
-                        onClick={imprimeInputValue}
-                        disableElevation>
-                    Limpar
-                </Button>
-                <Button variant="contained"
-                        color="primary"
-                        className={'botoes'}
-                        disableElevation>
-                    Cadastrar
-                </Button>
-            </div>
-        </div>
-    )
-}
 
-export default FormCadastro
+        </div>
+    );
+};
+
+export default FormCadastro;

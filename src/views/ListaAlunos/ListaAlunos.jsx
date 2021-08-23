@@ -41,8 +41,8 @@ const ListaAlunos = () => {
                     >
                     {carregaLista && <CircularProgress />}
                     </Grid>
-                    {alunos.map(el => {
-                        return <ListaItem nome={el.nomeAluno} turma={el.turma}/>
+                    {alunos.map(aluno => {
+                        return <ListaItem nome={aluno.nomeAluno} turma={aluno.turma} idAluno={aluno.id}/>
                     })}
                 </List>
             </div>

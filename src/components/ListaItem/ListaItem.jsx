@@ -1,7 +1,7 @@
 import React from 'react'
 import {Avatar, IconButton, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText} from '@material-ui/core'
 import ImageIcon from '@material-ui/icons/Image'
-import EditIcon from '@material-ui/icons/Edit';
+import OpenCard from '@material-ui/icons/Launch';
 
 const ListaItem = (props) => {
     return (
@@ -13,8 +13,8 @@ const ListaItem = (props) => {
             </ListItemAvatar>
             <ListItemText primary={props.nome} secondary={`Turma: ${props.turma}`}/>
             <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="comments">
-                    <EditIcon/>
+                <IconButton edge="end" aria-label="comments" data-id={props.idAluno}>
+                    <OpenCard/>
                 </IconButton>
             </ListItemSecondaryAction>
         </ListItem>

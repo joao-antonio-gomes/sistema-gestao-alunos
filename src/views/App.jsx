@@ -11,12 +11,7 @@ import {logDOM} from '@testing-library/react'
 
 export const App = props => {
     const [movies, setMovies] = useState(null)
-    /*useEffect(() => {
-        fetch('/api/movies', {
-            method: 'POST',
-            body: JSON.stringify({ 'name': 'Insterstellar', 'year': '2014' })
-        })
-    }, [])*/
+
 
     return (
         <div className="app">
