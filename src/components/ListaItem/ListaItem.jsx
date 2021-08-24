@@ -7,7 +7,7 @@ import DetalhesAlunos from '../../views/DetalhesAlunos/DetalhesAlunos';
 
 const ListaItem = (props) => {
     return (
-        <ListItem key={props.idAluno}>
+        <ListItem>
             <ListItemAvatar>
                 <Avatar>
                     <ImageIcon/>
