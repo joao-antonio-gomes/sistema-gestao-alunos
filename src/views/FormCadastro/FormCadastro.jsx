@@ -12,7 +12,7 @@ import {
     TextField,
 } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
-import {Switch, useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import Cabecalho from '../../components/Cabecalho/Cabecalho';
 
 const useStyles = makeStyles((theme) => ({
@@ -71,7 +71,7 @@ const FormCadastro = () => {
     const history = useHistory();
 
     const handleHistory = () => {
-        history.push('/');
+        console.log(history);
     };
 
     const validaCamposPreenchidos = () => {
@@ -89,23 +89,26 @@ const FormCadastro = () => {
             }
         }
         setInputRequire({...obj});
-        setTimeout(()=>{setInputRequire({...objOriginal})},3000)
+        setTimeout(() => {
+            setInputRequire({...objOriginal});
+        }, 3000);
         return bool;
     };
 
     const limpaFormulario = () => {
+        let obj = {};
         for (let inputValueKey in inputValue) {
             let valor = '';
             if (inputValueKey === 'checkRestricao' || inputValueKey === 'checkImagem') {
                 valor = false;
             }
-            setInputValue({
-                ...inputValue,
-                [inputValueKey]: ''
-            })
-            console.log(inputValue);
+            obj = {
+                ...obj,
+                [inputValueKey]: valor,
+            };
         }
-    }
+        setInputValue({...obj});
+    };
 
     const handleChange = (event) => {
         if (event.target.type === 'checkbox') {
@@ -141,7 +144,7 @@ const FormCadastro = () => {
 
     return (
         <div className={'form-cadastro'}>
-            <Cabecalho onClick={handleHistory}/>
+            <Cabecalho link={'/'}/>
             <form className={classes.root} noValidate autoComplete="off" method={'POST'}>
                 <TextField value={inputValue.nomeAluno}
                            onChange={handleChange}

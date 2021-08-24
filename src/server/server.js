@@ -1,4 +1,4 @@
-import {createServer} from 'miragejs'
+import {createServer} from 'miragejs';
 
 createServer({
     routes() {
@@ -52,6 +52,12 @@ createServer({
 
         this.get('/alunos', (schema, request) => {
             return alunos;
+        })
+
+        this.get('/alunos/:id', (schema, request) => {
+            const id = request.params.id;
+            const alunoFiltrado = alunos.filter(aluno => aluno.id == id);
+            return alunoFiltrado;
         })
 
         this.post("/alunos", (schema, request) => {

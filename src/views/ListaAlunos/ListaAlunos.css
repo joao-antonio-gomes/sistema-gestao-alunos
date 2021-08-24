@@ -20,3 +20,7 @@
 #search-bar {
     width: 90vw !important;
 }
+
+.spinner {
+    margin-top: 30vh;
+}
