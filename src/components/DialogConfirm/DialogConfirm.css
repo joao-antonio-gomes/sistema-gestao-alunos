@@ -1,0 +1,9 @@
+.MuiDialog-paper {
+    height: 25vh;
+    width: 90vw;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding: 5vw;
+}

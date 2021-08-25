@@ -1,5 +1,11 @@
 import {createServer} from 'miragejs';
 
+function reformatDate(dateStr)
+{
+    let dArr = dateStr.split("-");  // ex input "2010-01-18"
+    return dArr[2]+ "/" +dArr[1]+ "/" +dArr[0]; //ex out: "18/01/10"
+}
+
 createServer({
     routes() {
         const alunos = [{
@@ -10,7 +16,7 @@ createServer({
             nomeResponsavel: 'Pai do João',
             telefoneResponsavel: '(48) 9 9942-5211',
             telefoneEmergencia: '',
-            obsAdicionais: '',
+            obsAdicionais: 'Muito avoado',
             responsavelRetirar: 'Pai e Mãe do João',
             parentescoResponsavel: 'Pais',
             obsRestricao: '',
@@ -67,6 +73,24 @@ createServer({
             novoAluno.id = ultimoId + 1;
 
             alunos.push(novoAluno);
+
+            return ({'message': 'success'})
+        })
+
+        this.put("/alunos/:id", (schema, request) => {
+            const id = Number(request.params.id);
+            const posicaoAluno = alunos.findIndex(aluno => aluno.id == id);
+            const alunoAtualizado = JSON.parse(request.requestBody);
+            alunoAtualizado.dataAniversario = reformatDate(alunoAtualizado.dataAniversario)
+            alunos[posicaoAluno] = alunoAtualizado;
+
+            return ({'message': 'success'})
+        })
+
+        this.delete("/alunos/:id", (schema, request) => {
+            const id = Number(request.params.id);
+            const posicaoAluno = alunos.findIndex(aluno => aluno.id == id);
+            alunos.splice(posicaoAluno, 1);
 
             return ({'message': 'success'})
         })

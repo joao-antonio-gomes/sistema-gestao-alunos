@@ -12,8 +12,9 @@ import {
     TextField,
 } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
-import {useHistory} from 'react-router-dom';
+import {Redirect, useHistory} from 'react-router-dom';
 import Cabecalho from '../../components/Cabecalho/Cabecalho';
+import {DialogAlert} from '../../components/DialogAlert/DialogAlert';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -42,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
 
 const FormCadastro = () => {
     const classes = useStyles();
+    const [open, setOpen] = useState(false);
+    const [redirect, setRedirect] = useState(false);
+    const [selectedValue, setSelectedValue] = useState('Cadastro realizado com sucesso!');
     const [inputValue, setInputValue] = useState({
         nomeAluno: '',
         dataAniversario: '',
@@ -132,14 +136,18 @@ const FormCadastro = () => {
         fetch('/api/alunos', {
             method: 'POST',
             body: JSON.stringify(inputValue),
-        }).then(r => r.json());
+        }).then(r => r.json())
+            .then(response => {
+                if (response.message == 'success') {
+                    setOpen(true);
+                }
+            })
 
         setTimeout(() => {
-            fetch('/api/alunos')
-                .then(res => res.json())
-                .then(console.log)
-                .catch(err => console.log(err));
-        }, 1000);
+            setRedirect(true);
+            setOpen(false);
+            limpaFormulario();
+        }, 2000);
     };
 
     return (
@@ -302,7 +310,8 @@ const FormCadastro = () => {
                     </Button>
                 </div>
             </form>
-
+            <DialogAlert text={selectedValue} open={open}/>
+            {redirect && <Redirect to={'/cadastro'}/>}
         </div>
     );
 };

@@ -11,17 +11,20 @@ const ListaAlunos = () => {
     const [alunosLista, setAlunosLista] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
+
     useEffect(() => {
-        if (spinner) {
-            setTimeout(async () => {
-                const response = await fetch('/api/alunos/');
-                const json = await response.json();
-                setAlunos(json);
-                setAlunosLista(json)
-                setSpinner(false);
-            }, 500);
-        }
-    }, [spinner]);
+        carregaLista()
+        setTimeout(()=>{
+            setSpinner(false)
+        },500)
+    }, []);
+
+    async function carregaLista() {
+        const response = await fetch('/api/alunos/');
+        const json = await response.json();
+        setAlunos(json);
+        setAlunosLista(json);
+    }
 
 
     function buscaAlunos(e) {
@@ -30,9 +33,7 @@ const ListaAlunos = () => {
             aluno.nomeAluno.toLowerCase().includes(valorInput.toLowerCase()));
         if (valorInput == '') {
             setAlunos([...alunosLista]);
-        } else if (listaDeBusca.length === 0) {
-            setAlunos([...alunosLista]);
-        } else {
+        }  else {
             setAlunos([...listaDeBusca]);
         }
     }
@@ -68,7 +69,7 @@ const ListaAlunos = () => {
                     >
                         {spinner && <CircularProgress className={'spinner'}/>}
                     </Grid>
-                    {alunos.map(aluno => {
+                    {!spinner && alunos.map(aluno => {
                         return <ListaItem key={aluno.id} nome={aluno.nomeAluno}
                                           turma={aluno.turma} idAluno={aluno.id}/>;
                     })}

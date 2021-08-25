@@ -50,7 +50,7 @@ export const App = props => {
                         <DetalhesAlunos/>
                     </Route>
 
-                    <Route exact path={'/form-edit'}>
+                    <Route exact path={'/form-edit/:id'}>
                         <FormEdit/>
                     </Route>
                 </Switch>
