@@ -3,6 +3,6 @@
 ##### Funcionalidades
 
 * //github.com/joao-antonio-gomes/sistema-gestao-alunos (2c1861ec)
-* Funcionalidades: controle de cadastro de aluno, visualizacao de turmas
+* Funcionalidades: controle de cadastro de aluno, visualização de turmas
   (83be762)
 
