@@ -89,7 +89,7 @@ const DetalhesAlunos = (props) => {
                             </tr>
                             <tr>
                                 <td>Responsável para Buscar:</td>
-                                <td>{aluno.responsavelRetirar}</td>
+                                <td>{aluno.responsavelRetirar} - {aluno.parentescoResponsavel}</td>
                             </tr>
                             {aluno.checkRestricao &&
                             <tr>

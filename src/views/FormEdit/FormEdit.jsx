@@ -49,6 +49,7 @@ const FormEdit = () => {
     const [inputValue, setInputValue] = useState({});
     const [showForm, setShowForm] = useState(false);
     const [open, setOpen] = useState(false);
+    const [helpText, setHelpText] = useState('');
     const [redirect, setRedirect] = useState(false);
     const [selectedValue, setSelectedValue] = useState('Cadastro atualizado com sucesso!');
 
@@ -83,6 +84,27 @@ const FormEdit = () => {
         }, 3000);
         return bool;
     };
+
+    function filtraNumeroCelular(e) {
+        const nome = e.target.name;
+        const numeroFiltrado = e.target.value.replace(/[0-9]/, '');
+        if (numeroFiltrado.length <= 11 || numeroFiltrado.length >= 10) {
+            return true;
+        } else {
+            setInputRequire({
+                ...inputRequire,
+                [nome]: true,
+            });
+            setHelpText('Favor preencher número com formato: DDD 9 XXXX-XXXX');
+            setTimeout(() => {
+                setInputRequire({
+                    ...inputRequire,
+                    [nome]: false,
+                });
+                setHelpText('Campo obrigatório!');
+            }, 3000);
+        }
+    }
 
     const limpaFormulario = () => {
         let obj = {};

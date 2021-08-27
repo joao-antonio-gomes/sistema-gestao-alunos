@@ -1,41 +1,43 @@
 import React, {useEffect, useState} from 'react';
 import Cabecalho from '../../components/Cabecalho/Cabecalho';
-import './ListaAlunos.css';
+import './ListaTurmas.css'
 import {CircularProgress, Grid, List, TextField} from '@material-ui/core';
 import ListaItem from '../../components/ListaItem/ListaItem';
 
 
-const ListaAlunos = () => {
+const ListaTurmas = () => {
     const [spinner, setSpinner] = useState(true);
-    const [alunos, setAlunos] = useState([]);
-    const [alunosLista, setAlunosLista] = useState([]);
+    const [turmas, setTurmas] = useState([]);
+    const [turmasLista, setTurmasLista] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
 
     useEffect(() => {
-        carregaLista()
+        carregaTurmas()
         setTimeout(()=>{
             setSpinner(false)
         },500)
     }, []);
 
-    async function carregaLista() {
-        const response = await fetch('/api/alunos/');
+    async function carregaTurmas() {
+        const response = await fetch('/api/turmas/');
         const json = await response.json();
-        setAlunos(json);
-        setAlunosLista(json);
+
+        setTurmasLista(json);
+        setTurmas(json)
     }
 
 
-    function buscaAlunos(e) {
+    function buscaTurma(e) {
         const valorInput = e.target.value;
-        let listaDeBusca = alunosLista.filter(aluno =>
-            aluno.nomeAluno.toLowerCase().includes(valorInput.toLowerCase()));
+        let listaDeBusca = turmasLista.filter(turma =>
+            turma.turma.includes(valorInput));
         if (valorInput == '') {
-            setAlunos([...alunosLista]);
+            setTurmas([...turmasLista]);
         }  else {
-            setAlunos([...listaDeBusca]);
+            setTurmas([...listaDeBusca]);
         }
+
     }
 
     function handle(e) {
@@ -44,24 +46,24 @@ const ListaAlunos = () => {
 
     function onChangeSearchbar(e) {
         handle(e);
-        buscaAlunos(e);
+        buscaTurma(e);
     }
 
     return (
-        <div className={'page-lista-alunos'}>
+        <div className={'page-lista-turmas'}>
             <Cabecalho link={'/'}/>
             <div className="container-lista-search">
                 <TextField
                     autoComplete={'off'}
                     id="search-bar"
-                    label="Buscar aluno"
-                    type="search"
+                    label="Buscar turma"
+                    type="number"
                     variant="outlined"
                     size="small"
                     value={searchTerm}
                     onChange={onChangeSearchbar}
                 />
-                <List className={'lista-alunos'}>
+                <List className={'lista-turmas'}>
                     <Grid
                         container
                         direction="column"
@@ -70,10 +72,9 @@ const ListaAlunos = () => {
                     >
                         {spinner && <CircularProgress className={'spinner'}/>}
                     </Grid>
-                    {!spinner && alunos.map(aluno => {
-                        return <ListaItem key={aluno.id} nome={aluno.nomeAluno}
-                                          turma={aluno.turma} queryId={aluno.id}
-                        endpoint={'/detalhes-alunos/'}/>;
+                    {!spinner && turmas.map(turma => {
+                        return <ListaItem key={turma.id} nome={turma.turma}
+                        endpoint={'/detalhes-turma/'} queryId={turma.turma}/>;
                     })}
                 </List>
             </div>
@@ -81,4 +82,4 @@ const ListaAlunos = () => {
     );
 };
 
-export default ListaAlunos;
+export default ListaTurmas;

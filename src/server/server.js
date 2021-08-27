@@ -1,4 +1,5 @@
 import {createServer} from 'miragejs';
+import { v4 } from 'uuid';
 
 function reformatDate(dateStr)
 {
@@ -8,54 +9,73 @@ function reformatDate(dateStr)
 
 createServer({
     routes() {
-        const alunos = [{
-            id: 1,
-            nomeAluno: 'João',
+        let id = 6;
+
+        const alunos = [
+            {
+            id: '1',
+            nomeAluno: 'Ciclano Jr',
             dataAniversario: '04/12/2016',
             turma: '102',
-            nomeResponsavel: 'Pai do João',
-            telefoneResponsavel: '(48) 9 9942-5211',
+            nomeResponsavel: 'Ciclano',
+            telefoneResponsavel: '(48) 8 8888-4444',
             telefoneEmergencia: '',
             obsAdicionais: 'Muito avoado',
-            responsavelRetirar: 'Pai e Mãe do João',
-            parentescoResponsavel: 'Pais',
+            responsavelRetirar: 'Ciclano',
+            parentescoResponsavel: 'Pai',
             obsRestricao: '',
             checkRestricao: false,
             checkImagem: true,
         },
             {
-                id: 2,
+                id: '2',
                 nomeAluno: 'Beltrana',
                 dataAniversario: '21/07/2015',
-                turma: '102',
-                nomeResponsavel: 'Mãe da Beltrana',
+                turma: '101',
+                nomeResponsavel: 'Maria Beltrana',
                 telefoneResponsavel: '(48) 9 8851-2222',
                 telefoneEmergencia: '',
                 obsAdicionais: '',
-                responsavelRetirar: 'Padrinhos da Beltrana',
-                parentescoResponsavel: 'Padrinhos',
+                responsavelRetirar: 'Maria Beltrana',
+                parentescoResponsavel: 'Mãe',
                 obsRestricao: 'Amendoim',
                 checkRestricao: true,
                 checkImagem: true,
             },
             {
-                id: 3,
+                id: '3',
                 nomeAluno: 'Fulano',
                 dataAniversario: '14/03/2016',
                 turma: '101',
-                nomeResponsavel: 'Mãe do Fulano',
+                nomeResponsavel: 'Juresmino',
                 telefoneResponsavel: '(47) 9 9532-8888',
                 telefoneEmergencia: '',
                 obsAdicionais: '',
-                responsavelRetirar: 'Tios do Fulano',
-                parentescoResponsavel: 'Tios',
+                responsavelRetirar: 'Juresmino',
+                parentescoResponsavel: 'Transporte Escolar',
                 obsRestricao: 'Nozes',
                 checkRestricao: true,
                 checkImagem: false,
             }];
 
+        const turmas = [
+            {
+                id: '4',
+                turma: '101',
+            },
+            {
+                id: '5',
+                turma: '102',
+            },
+            {
+                id: '6',
+                turma: '103',
+            },
+        ]
+
         this.namespace = '/api';
 
+        // ====================== ALUNOS ====================== //
         this.get('/alunos', (schema, request) => {
             return alunos;
         })
@@ -68,9 +88,9 @@ createServer({
 
         this.post("/alunos", (schema, request) => {
             let novoAluno = JSON.parse(request.requestBody)
-            const ultimoAdicionado = alunos[alunos.length - 1]
-            const ultimoId = ultimoAdicionado.id;
-            novoAluno.id = ultimoId + 1;
+            id += 1;
+            novoAluno.id = String(id);
+            novoAluno.dataAniversario = reformatDate(novoAluno.dataAniversario)
 
             alunos.push(novoAluno);
 
@@ -94,5 +114,20 @@ createServer({
 
             return ({'message': 'success'})
         })
+        // ====================== FIM ALUNOS ====================== //
+
+
+        // ====================== TURMAS ====================== //
+        this.get('/turmas', (schema, request) => {
+            return turmas;
+        })
+
+        this.get('/turmas/:id', (schema, request) => {
+            const turma = request.params.id;
+            const alunosFiltrado = alunos.filter(aluno => aluno.turma == turma);
+            return alunosFiltrado;
+        })
+        // ====================== FIM TURMAS ====================== //
+
     }
 })

@@ -1,15 +1,15 @@
-.detalhes-aluno-page {
+.detalhes-turma-page {
     height: 100vh;
 }
 
-.detalhes-aluno-card {
+.detalhes-turma-card {
     padding: 0 5vw 5vw;
 }
 
 .header-card {
     margin-top: 5vw;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
 .header-card {
@@ -18,23 +18,24 @@
     padding-bottom: 5vw;
 }
 
-.aluno-header-info {
+.turma-header-info {
     padding-left: 5vw;
-    font-size: 26px;
+    font-size: 32px;
 }
 
-.aluno-card-info table {
+.turma-card-info table {
     width: 100%;
     font-size: 16px;
+    text-align: center;
 }
 
-.aluno-card-info tr * {
+.turma-card-info tr * {
     padding: 2vw 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.13);
 }
 
-.aluno-card-info td:first-child {
-    font-weight: bold;
+.turma-card-info td:first-child {
+    /*font-weight: bold;*/
     width: 50vw;
 }
 
@@ -48,7 +49,7 @@
     width: auto;
 }
 
-.botoes-detalhe-aluno {
+.botoes-detalhe-turma {
     width: 40% !important;
     margin: 0 !important;
     padding: 0 !important;

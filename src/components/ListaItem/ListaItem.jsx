@@ -6,6 +6,8 @@ import {Link, Route, Router, Switch} from 'react-router-dom';
 import DetalhesAlunos from '../../views/DetalhesAlunos/DetalhesAlunos';
 
 const ListaItem = (props) => {
+    const {turma, nome, queryId, endpoint} = props;
+
     return (
         <ListItem>
             <ListItemAvatar>
@@ -13,9 +15,9 @@ const ListaItem = (props) => {
                     <ImageIcon/>
                 </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={props.nome} secondary={`Turma: ${props.turma}`}/>
+            <ListItemText primary={nome} secondary={turma !== undefined ? `Turma: ${turma}` : ''}/>
             <ListItemSecondaryAction>
-                <Link to={'/detalhes-alunos/'+props.idAluno}>
+                <Link to={endpoint + queryId}>
                     <IconButton edge="end" aria-label="comments">
                         <OpenCard/>
                     </IconButton>

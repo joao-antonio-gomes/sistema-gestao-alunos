@@ -8,6 +8,8 @@ import DetalhesAlunos from './DetalhesAlunos/DetalhesAlunos'
 import FormEdit from './FormEdit/FormEdit'
 import '../server/server';
 import {logDOM} from '@testing-library/react'
+import ListaTurmas from './ListaTurmas/ListaTurmas';
+import DetalhesTurma from './DetalhesTurma/DetalhesTurma';
 
 export const App = props => {
     const [movies, setMovies] = useState(null)
@@ -35,6 +37,14 @@ export const App = props => {
                                     Lista de alunos
                                 </Button>
                             </Link>
+                            <Link to={'/lista-turmas'}>
+                                <Button variant="contained"
+                                        style={{backgroundColor: "green", color: "white"}}
+                                        className="botoes-home botao-secundario"
+                                        disableElevation>
+                                    Lista de Turmas
+                                </Button>
+                            </Link>
                         </div>
                     </Route>
 
@@ -52,6 +62,14 @@ export const App = props => {
 
                     <Route exact path={'/form-edit/:id'}>
                         <FormEdit/>
+                    </Route>
+
+                    <Route exact path={'/lista-turmas'}>
+                        <ListaTurmas/>
+                    </Route>
+
+                    <Route exact path={'/detalhes-turma/:id'}>
+                        <DetalhesTurma/>
                     </Route>
                 </Switch>
             </Router>

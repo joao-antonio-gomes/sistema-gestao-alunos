@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import InputMask from 'react-input-mask';
 import './FormCadastro.css';
 import {
     Button,
@@ -46,6 +47,7 @@ const FormCadastro = () => {
     const [open, setOpen] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [selectedValue, setSelectedValue] = useState('Cadastro realizado com sucesso!');
+    const [helpText, setHelpText] = useState('Campo obrigatório!');
     const [inputValue, setInputValue] = useState({
         nomeAluno: '',
         dataAniversario: '',
@@ -72,19 +74,21 @@ const FormCadastro = () => {
         parentescoResponsavel: false,
     });
 
-    const history = useHistory();
-
-    const handleHistory = () => {
-        console.log(history);
-    };
-
     const validaCamposPreenchidos = () => {
         let bool = true;
         let obj = {};
         const objOriginal = {...inputRequire};
         for (let inputRequireKey in inputRequire) {
             let input = document.querySelector(`input[name="` + inputRequireKey + `"]`);
-            if (input.required && input.value === '') {
+            if (inputRequireKey == 'telefoneEmergencia' || inputRequireKey == 'telefoneResponsavel') {
+                if (!filtraNumeroCelular(input)) {
+                    obj = {
+                        ...obj,
+                        [inputRequireKey]: true,
+                    };
+                bool = false;
+                }
+            } else if (input.required && input.value === '') {
                 obj = {
                     ...obj,
                     [inputRequireKey]: true,
@@ -114,6 +118,13 @@ const FormCadastro = () => {
         setInputValue({...obj});
     };
 
+    function filtraNumeroCelular(input) {
+        const numeroFiltrado = input.value.replace(/\D/g, '');
+        console.log(numeroFiltrado);
+        const ehValido = /\(?([0-9]{2,3})?\)?[0-9]{4,5}-?[0-9]{4}/.test(numeroFiltrado);
+        return numeroFiltrado.length >= 11 && numeroFiltrado.length <= 12 && ehValido ;
+    }
+
     const handleChange = (event) => {
         if (event.target.type === 'checkbox') {
             setInputValue({
@@ -130,7 +141,15 @@ const FormCadastro = () => {
 
     const cadastraAluno = (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        e.target.removeAttribute('enabled');
+        e.target.setAttribute('disabled', 'disabled');
+
         if (!validaCamposPreenchidos()) {
+            setTimeout(() => {
+                e.target.removeAttribute('disabled');
+                e.target.setAttribute('enabled', 'enabled');
+            }, 3000);
             return;
         }
         fetch('/api/alunos', {
@@ -141,31 +160,35 @@ const FormCadastro = () => {
                 if (response.message == 'success') {
                     setOpen(true);
                 }
-            })
+            });
 
         setTimeout(() => {
-            setRedirect(true);
             setOpen(false);
             limpaFormulario();
+            setRedirect(true);
         }, 2000);
     };
 
     return (
         <div className={'form-cadastro'}>
             <Cabecalho link={'/'}/>
-            <form className={classes.root} noValidate autoComplete="off" method={'POST'}>
+            <form className={classes.root} method={'POST'}>
                 <TextField value={inputValue.nomeAluno}
+                           inputProps={{
+                               autoComplete: 'off',
+                           }}
                            onChange={handleChange}
                            name="nomeAluno"
                            label="Nome do Aluno"
                            size="small"
                            error={inputRequire.nomeAluno}
-                           helperText={inputRequire.nomeAluno ? 'Campo obrigatório!' : ''}
+                           helperText={inputRequire.nomeAluno ? helpText : ''}
                            required
                 />
                 <div className={'data-turma-group'}>
                     <TextField
                         value={inputValue.dataAniversario}
+                        autoComplete={'off'}
                         onChange={handleChange}
                         name="dataAniversario"
                         label="Data de Aniversário"
@@ -174,7 +197,7 @@ const FormCadastro = () => {
                         className={classes.textField}
                         required
                         error={inputRequire.dataAniversario}
-                        helperText={inputRequire.dataAniversario ? 'Campo obrigatório!' : ''}
+                        helperText={inputRequire.dataAniversario ? helpText : ''}
                         InputLabelProps={{
                             shrink: true,
                         }}/>
@@ -183,7 +206,7 @@ const FormCadastro = () => {
                             htmlFor="turma"
                             required
                             error={inputRequire.turma}
-                            helperText={inputRequire.turma ? 'Campo obrigatório!' : ''}
+                            helperText={inputRequire.turma ? helpText : ''}
                         >Selecione uma turma:
                         </InputLabel>
                         <Select
@@ -205,7 +228,7 @@ const FormCadastro = () => {
                             onChange={handleChange}
                             required
                             error={inputRequire.turma}
-                            helperText={inputRequire.turma ? 'Campo obrigatório!' : ''}
+                            helperText={inputRequire.turma ? helpText : ''}
                         >
                             <MenuItem value={''}><em>None</em></MenuItem>
                             <MenuItem value={101}>101</MenuItem>
@@ -216,60 +239,56 @@ const FormCadastro = () => {
                 </div>
                 <TextField value={inputValue.nomeResponsavel}
                            onChange={handleChange}
+                           autoComplete={'off'}
                            name="nomeResponsavel"
                            label="Nome do Responsável"
                            required
                            error={inputRequire.nomeResponsavel}
-                           helperText={inputRequire.nomeResponsavel ? 'Campo obrigatório!' : ''}
+                           helperText={inputRequire.nomeResponsavel ? helpText : ''}
                            size="small"/>
                 <TextField value={inputValue.telefoneResponsavel} name="telefoneResponsavel" onChange={handleChange}
-                           label="Telefone Contato Responsável"
+                           label="Celular Contato Responsável"
                            required
+                           autoComplete={'off'}
+                    // onBlur={filtraNumeroCelular}
+                           inputProps={{
+                               pattern: '\\(?([0-9]{2,3})?\\)?[0-9]{4,5}-?[0-9]{4}',
+                           }}
                            error={inputRequire.telefoneResponsavel}
-                           helperText={inputRequire.telefoneResponsavel ? 'Campo obrigatório!' : ''}
+                           helperText={inputRequire.telefoneResponsavel ? 'Favor preencher número com formato: DDD 9 XXXX-XXXX' : ''}
                            size="small"/>
-                <TextField value={inputValue.telefoneEmergencia} name="telefoneEmergencia" onChange={handleChange}
-                           label="Telefone Contato Emergência"
+                <TextField value={inputValue.telefoneEmergencia}
+                           name="telefoneEmergencia"
+                           autoComplete={'off'}
+                    // onBlur={filtraNumeroCelular}
+                            inputProps={{
+                                pattern: '\\(?([0-9]{2,3})?\\)?[0-9]{4,5}-?[0-9]{4}',
+                            }}
+                           onChange={handleChange}
+                           label="Celular Contato Emergência"
                            required
                            error={inputRequire.telefoneEmergencia}
-                           helperText={inputRequire.telefoneEmergencia ? 'Campo obrigatório!' : ''}
+                           helperText={inputRequire.telefoneEmergencia ? 'Favor preencher número com formato: DDD 9 XXXX-XXXX' : ''}
                            size="small"/>
-                <TextField value={inputValue.obsAdicionais} name="obsAdicionais" onChange={handleChange}
+                <TextField value={inputValue.responsavelRetirar} name="responsavelRetirar"
+                           onChange={handleChange}
+                           autoComplete={'off'}
+                           label="Nome do responsável para retirar"
+                           required
+                           error={inputRequire.responsavelRetirar}
+                           helperText={inputRequire.responsavelRetirar ? helpText : ''}
+                           size="small"/>
+                <TextField value={inputValue.parentescoResponsavel} name="parentescoResponsavel"
+                           onChange={handleChange}
+                           autoComplete={'off'}
+                           label="Parentesco do responsável para retirar"
+                           required
+                           error={inputRequire.parentescoResponsavel}
+                           helperText={inputRequire.parentescoResponsavel ? helpText : ''}
+                           size="small"/>
+                <TextField value={inputValue.obsAdicionais}
+                           autoComplete={'off'} name="obsAdicionais" onChange={handleChange}
                            label="Observações adicionais" size="small"/>
-                <FormGroup>
-                    <TextField value={inputValue.responsavelRetirar} name="responsavelRetirar" onChange={handleChange}
-                               label="Nome do responsável para retirar"
-                               required
-                               error={inputRequire.responsavelRetirar}
-                               helperText={inputRequire.responsavelRetirar ? 'Campo obrigatório!' : ''}
-                               size="small"/>
-                    <FormControl className={classes.formControl}>
-                        <InputLabel
-                            htmlFor="parentescoResponsavel"
-                            required
-                            error={inputRequire.parentescoResponsavel}
-                            helperText={inputRequire.parentescoResponsavel ? 'Campo obrigatório!' : ''}
-                        >
-                            Parentesco do responsável para retirar:
-                        </InputLabel>
-                        <Select
-                            inputProps={{
-                                name: 'parentescoResponsavel',
-                            }}
-                            required
-                            error={inputRequire.parentescoResponsavel}
-                            helperText={inputRequire.parentescoResponsavel ? 'Campo obrigatório!' : ''}
-                            onChange={handleChange}
-                            value={inputValue.parentescoResponsavel}
-                        >
-                            <MenuItem value={''}><em>None</em></MenuItem>
-                            <MenuItem value={'pais'}>Pais</MenuItem>
-                            <MenuItem value={'tios'}>Tios</MenuItem>
-                            <MenuItem value={'avos'}>Avós</MenuItem>
-                            <MenuItem value={'padrinhos'}>Padrinhos</MenuItem>
-                        </Select>
-                    </FormControl>
-                </FormGroup>
                 <FormGroup className={classes.formControlCheck}>
                     <FormLabel className={'checkbox-format'} component="legend">O aluno possui restrição
                         alimentar?</FormLabel>
@@ -280,7 +299,8 @@ const FormCadastro = () => {
                     />
                 </FormGroup>
                 <Collapse in={inputValue.checkRestricao}>
-                    <TextField value={inputValue.obsRestricao} onChange={handleChange} name="obsRestricao"
+                    <TextField value={inputValue.obsRestricao}
+                               autoComplete={'off'} onChange={handleChange} name="obsRestricao"
                                label="obsRestricao" size="small"/>
                 </Collapse>
                 <FormGroup className={classes.formControlCheck}>
@@ -311,7 +331,7 @@ const FormCadastro = () => {
                 </div>
             </form>
             <DialogAlert text={selectedValue} open={open}/>
-            {redirect && <Redirect to={'/cadastro'}/>}
+            {redirect && <Redirect to={'/lista-alunos'}/>}
         </div>
     );
 };
